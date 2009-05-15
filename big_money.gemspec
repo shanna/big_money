@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# vim: fileencoding=utf-8 syntax=ruby
 
 Gem::Specification.new do |s|
   s.name = %q{big_money}

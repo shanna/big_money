@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class BigMoney
   class Currency
     class AED < Currency #:nodoc:

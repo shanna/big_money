@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'hpricot'
 require 'open-uri'
 require 'erubis'

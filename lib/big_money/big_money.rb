@@ -1,7 +1,9 @@
+# encoding: utf-8
+
 require 'bigdecimal'
 
 class BigMoney
-  VERSION = '0.2.2'
+  VERSION = '0.3.0'
 
   class MoneyError < StandardError; end
   class UnknownCurrency < MoneyError; end

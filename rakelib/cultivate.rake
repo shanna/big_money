@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # Only works on unixy type systems.
 # http://blog.behindlogic.com/2008/10/auto-generate-your-manifest-and-gemspec.html
 desc 'Rebuild manifest and gemspec.'

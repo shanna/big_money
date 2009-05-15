@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class String
   def to_big_money(currency = nil)
     BigMoney.new(self, currency)

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 namespace :currency do
 
   desc 'Create ISO 4217 currency classes from wikipedia ISO 4217 table.'
