@@ -1,15 +1,22 @@
-# encoding: utf-8
-
+# coding: utf-8
 require 'bigdecimal'
 
 class BigMoney
+  # Exchange to a new Currency.
+  #
+  #   BigMoney.new(12.50, :aud).exchange(:usd)
+  def exchange(to)
+    ex = amount * Exchange.rate(currency, to)
+    BigMoney.new(ex, to)
+  end
 
   # Find the exchange rate between two currencies.
   #
   # Be aware no caching is done at all at the moment.
+  #--
+  # TODO: Moneta would be ideal for this.
   class Exchange
-    class ExchangeError < StandardError; end
-    class ConversionError < ExchangeError; end
+    class ConversionError < StandardError; end
 
     class << self
       @@services = []
@@ -20,9 +27,7 @@ class BigMoney
       # Fetch the exchange rate between two currencies. The arguments may be anything that BigMoney::Currency can
       # parse. The rate is returned as a BigDecimal.
       def rate(from, to)
-        exchange = [from, to].map do |c|
-          Currency.parse(c) or raise BigMoney::UnknownCurrency
-        end
+        exchange = [from, to].map{|c| Currency.find(c)}
         return BigDecimal(1.to_s) if exchange.uniq.length == 1
 
         service = @@services.reverse.find do |service|

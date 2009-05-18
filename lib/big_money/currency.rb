@@ -1,8 +1,13 @@
-# encoding: utf-8
-
+# coding: utf-8
 require 'singleton'
 
 class BigMoney
+  # Short form BigMoney::Currency.find(code) to save some typing.
+  #
+  #   BigMoney.currency(:usd) #=> BigMoney::Currency.find(:usd)
+  def self.currency(code)
+    Currency.find(code)
+  end
 
   # Currency singleton objects.
   #
@@ -66,10 +71,11 @@ class BigMoney
         @@currencies.uniq
       end
 
-      # Parse a currency instance, an upper or lowercase string or symbol of the currency code into a currency
-      # object.
-      def parse(value)
-        all.find{|c| c.code == value.to_s.upcase}.instance rescue nil
+      # Find a currency instance from an upper or lowercase string or symbol of the currency code.
+      def find(currency)
+        klass = all.find{|c| c.code == currency.to_s.upcase}
+        raise ArgumentError.new("+currency+ '#{currency}' does not exist.") if klass.nil?
+        klass.instance
       end
     end
   end # Currency

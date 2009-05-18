@@ -1,45 +1,75 @@
-# encoding: utf-8
-
+# coding: utf-8
 require 'bigdecimal'
+require 'big_money/currency'
 
+# == Synopsis
+#
+#   bm = BigMoney.new('3.99')
+#   bm.amount           #=> BigDecimal.new('3.99')
+#   bm.currency         #=> BigMoney::Currency::USD.instance
+#   bm.to_s             #=> '3.99'
+#   bm.to_s('$.2f')     #=> '$3.99'
+#   bm.to_s('$%.2f %s') #=> '$3.99 USD'
 class BigMoney
-  VERSION = '0.3.0'
-
-  class MoneyError < StandardError; end
-  class UnknownCurrency < MoneyError; end
-  class UncomparableCurrency < MoneyError; end
-
-  @@default_currency = Currency::USD.instance
-  def self.default_currency ; @@default_currency ; end
-  def self.default_currency=(c) ; @@default_currency = c ; end
-  def default_currency ; self.class.default_currency ; end
-  def default_currency=(c) ; self.class.default_currency = c ; end
-
   attr_reader :amount, :currency
 
+  # USD.
+  @@default_currency = Currency::USD.instance
+
+  # The default currency.
+  #
+  # ==== Returns
+  # BigMoney::Currency or nil
+  def self.default_currency
+    @@default_currency
+  end
+
+  # The default currency.
+  #
+  # ==== Parameters
+  # currency<BigMoney::Currency, #to_s>:: ISO-4217 3 letter currency code.
+  #
+  # ==== Returns
+  # BigMoney::Currency
+  def self.default_currency=(currency)
+    @@default_currency = Currency.find(currency)
+  end
+
+  # Create a BigMoney instance.
+  #
+  # ==== Parameters
+  # amount<BigDecimal, #to_s>:: Amount.
+  # currency<BigMoney::Currency, #to_s>:: Optional ISO-4217 3 letter currency code.
+  #
+  # ==== Notes
+  # Uses the default currency if none is passed.
+  #
+  # ==== Returns
+  # BigMoney
   def initialize(amount, currency = nil)
+    raise ArgumentError.new("+amount+ must be BigDecimal or respond to #to_s, but was '#{amount.class}'.") \
+      unless amount.kind_of?(BigDecimal) || amount.respond_to?(:to_s)
+
     @amount   = amount.class == BigDecimal ? amount : BigDecimal.new(amount.to_s)
-    @currency = Currency.parse(currency || default_currency) or \
-      raise UnknownCurrency, "Cannot parse '#{currency}'."
+    @currency = self.class.currency(currency || self.class.default_currency)
   end
 
-  def eql?(other_money)
-    currency == other_money.currency && amount == other_money.amount
+  def eql?(money)
+    assert_kind money
+    currency == money.currency && amount == money.amount
   end
 
-  def ==(other_money)
-    eql?(other_money)
+  def ==(money)
+    eql?(money)
   end
 
-  def <=>(other_money)
-    raise UncomparableCurrency, "Cannot compare #{currency} to #{other_money.currency}" \
-      unless currency == other_money.currency
-
-    amount <=> other_money.amount
+  def <=>(money)
+    assert_cmp money
+    amount <=> money.amount
   end
 
   def -@
-    BigMoney.new(-amount, currency)
+    self.class.new(-amount, currency)
   end
 
   def +(val)
@@ -58,11 +88,8 @@ class BigMoney
     op(:/, val)
   end
 
-  def to_s
-    to_formatted_s("%.#{currency.offset}f")
-  end
-
-  def to_formatted_s(format)
+  def to_s(format = nil)
+    format ||= "%.#{currency.offset}f"
     format.sub(/%s/, currency.code) % amount
   end
 
@@ -74,29 +101,25 @@ class BigMoney
     amount.to_f
   end
 
-  # Exchange to a new Currency.
-  #
-  #   BigMoney.new(12.50, :aud).exchange(:usd)
-  def exchange(to)
-    ex = amount * Exchange.rate(currency, to)
-    BigMoney.new(ex, to)
-  end
-
-  # Short form BigMoney::Currency.parse(code) to save some typing.
-  #
-  #   BigMoney.currency(:usd) #=> BigMoney::Currency.parse(:usd)
-  def self.currency(code)
-    Currency.parse(code)
-  end
-
-private
-  def op(s, val)
-    if val.class == BigMoney
-      raise UncomparableCurrency, "Cannot compare #{currency} to #{val.currency}" \
-        unless currency == val.currency
-      BigMoney.new(amount.send(s, val.amount), currency)
-    else
-      BigMoney.new(amount.send(s, val), currency)
+  protected
+    def assert_kind(money, called = caller) #:nodoc:
+      raise ArgumentError.new("+money+ must be kind of BigMoney, but got '#{money.class}'.", called) \
+        unless money.kind_of?(BigMoney)
     end
-  end
+
+    def assert_cmp(money, called = caller) #:nodoc:
+      assert_kind money, called
+      raise TypeError.new("Currency mistmatch, cannot compare '#{to_s}' to '#{money.to_s}'.", called) \
+        unless currency == money.currency
+    end
+
+  private
+    def op(s, val) #:nodoc:
+      if val.class == BigMoney
+        assert_cmp val, caller
+        self.class.new(amount.send(s, val.amount), currency)
+      else
+        self.class.new(amount.send(s, val), currency)
+      end
+    end
 end

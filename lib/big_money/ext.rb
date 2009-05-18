@@ -1,4 +1,4 @@
-# encoding: utf-8
+# coding: utf-8
 
 class String
   def to_big_money(currency = nil)
