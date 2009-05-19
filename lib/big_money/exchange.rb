@@ -2,13 +2,24 @@
 require 'bigdecimal'
 
 class BigMoney
-  # Exchange to a new Currency.
-  #
-  #   BigMoney.new(12.50, :aud).exchange(:usd)
-  def exchange(to)
-    ex = amount * Exchange.rate(currency, to)
-    BigMoney.new(ex, to)
-  end
+  module Exchangeable
+    # Exchange to a new Currency.
+    #
+    # ==== Examples
+    #
+    #   BigMoney.new(12.50, :aud).exchange(:usd)
+    #
+    # ==== Parameters
+    # from<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
+    #
+    # ==== Returns
+    # BigMoney
+    def exchange(to)
+      ex = amount * Exchange.rate(currency, to)
+      self.class.new(ex, to)
+    end
+  end # Exchangeable
+  include Exchangeable
 
   # Find the exchange rate between two currencies.
   #
@@ -24,8 +35,14 @@ class BigMoney
         @@services << service
       end
 
-      # Fetch the exchange rate between two currencies. The arguments may be anything that BigMoney::Currency can
-      # parse. The rate is returned as a BigDecimal.
+      # Fetch the exchange rate between two currencies.
+      #
+      # ==== Parameters
+      # from<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
+      # to<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
+      #
+      # ==== Returns
+      # BigDecimal
       def rate(from, to)
         exchange = [from, to].map{|c| Currency.find(c)}
         return BigDecimal(1.to_s) if exchange.uniq.length == 1
@@ -40,11 +57,27 @@ class BigMoney
 
       protected
         # Exchange rate from the first currency to the second.
+        #
+        # ==== Notes
+        # Abstract.
+        #
+        # ==== Parameters
+        # from<BigMoney::Currency>::
+        # to<BigMoney::Currency>::
+        #
+        # ==== Returns
+        # BigDecimal
         def read_rate(from, to)
           raise NotImplementedError
         end
 
-        # An array of supported currencies.
+        # Supported currencies.
+        #
+        # ==== Notes
+        # Abstract.
+        #
+        # ==== Returns
+        # Array<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
         def currencies
           raise NotImplementedError
         end

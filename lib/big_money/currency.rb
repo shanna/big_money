@@ -2,12 +2,23 @@
 require 'singleton'
 
 class BigMoney
-  # Short form BigMoney::Currency.find(code) to save some typing.
-  #
-  #   BigMoney.currency(:usd) #=> BigMoney::Currency.find(:usd)
-  def self.currency(code)
-    Currency.find(code)
-  end
+  module Currencies
+    # Short form BigMoney::Currency.find(code) to save some typing.
+    #
+    # ==== Examples
+    #
+    #   BigMoney.currency(:usd) #=> BigMoney::Currency.find(:usd)
+    #
+    # ==== Parameters
+    # code<#to_s>:: An upper or lowercase string or symbol of the ISO-4217 currency code.
+    #
+    # ==== Returns
+    # BigMoney::Currency
+    def currency(code)
+      Currency.find(code)
+    end
+  end # Currencies
+  extend Currencies
 
   # Currency singleton objects.
   #
