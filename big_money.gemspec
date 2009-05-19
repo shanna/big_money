@@ -6,29 +6,35 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marshall Roch", "Shane Hanna"]
-  s.date = %q{2009-05-18}
+  s.date = %q{2009-05-19}
   s.email = ["mroch@cmu.edu", "shane.hanna@gmail.com"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
   ]
   s.files = [
-    "LICENSE",
+    ".document",
+     ".gitignore",
+     "LICENSE",
      "README.rdoc",
      "Rakefile",
+     "VERSION.yml",
      "big_money.gemspec",
      "lib/big_money.rb",
      "lib/big_money/big_money.rb",
-     "lib/big_money/core_extensions.rb",
      "lib/big_money/currency.rb",
      "lib/big_money/currency/iso4217.rb",
      "lib/big_money/exchange.rb",
      "lib/big_money/exchange/yahoo.rb",
+     "lib/big_money/ext.rb",
+     "lib/big_money/parser.rb",
      "rakelib/iso4217.rb",
      "rakelib/iso4217.rb.erb",
+     "test/helper.rb",
      "test/test_big_money.rb",
      "test/test_currency.rb",
-     "test/test_exchange.rb"
+     "test/test_exchange.rb",
+     "test/test_parser.rb"
   ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/mroch/big_money}
@@ -40,7 +46,8 @@ Gem::Specification.new do |s|
     "test/helper.rb",
      "test/test_big_money.rb",
      "test/test_currency.rb",
-     "test/test_exchange.rb"
+     "test/test_exchange.rb",
+     "test/test_parser.rb"
   ]
 
   if s.respond_to? :specification_version then
