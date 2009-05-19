@@ -1,7 +1,21 @@
 # coding: utf-8
-# require 'big_money'
+require 'big_money' # Make it possible to just require 'big_money/parser'.
 
 class BigMoney
+  # Fuzzy string parsing.
+  #
+  # Supports scientific notation for amounts and ISO-4217 currency symbols.
+  #
+  # == Synopsis
+  #
+  #   require 'big_money'
+  #   require 'big_money/parser' # This module/mixin.
+  #
+  #   BigMoney.parse('JPY ¥2500')   #=> BigMoney.new('2500', :jpy)
+  #   BigMoney.parse('JPY2500')     #=> BigMoney.new('2500', :jpy)
+  #   BigMoney.parse('2500JPY')     #=> BigMoney.new('2500', :jpy)
+  #   BigMoney.parse('¥2500JPY')    #=> BigMoney.new('2500', :jpy)
+  #   BigMoney.parse('¥2500', :jpy) #=> BigMoney.new('2500', :jpy)
   module Parser
     REGEXP = %r{
       (?:^|\b)
