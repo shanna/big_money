@@ -1,6 +1,6 @@
 # coding: utf-8
-
 require 'open-uri'
+require 'big_money/exchange'
 
 class BigMoney
   class Exchange

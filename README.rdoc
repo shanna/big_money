@@ -1,70 +1,78 @@
 = BigMoney
 
-== DESCRIPTION:
+== Description
 
-Represents an amount of money in a particular currency. Backed by BigDecimal, 
-so is safe from float rounding errors.
+Represents an amount of money in a particular currency. Backed by BigDecimal, so it's safe from float rounding errors.
 
-== FEATURES:
+== Features
 
 * Encapsulates an amount with its currency into a single object.
+* Backed by BigDecimal, so it can store arbitrary-precision values without rounding errors. Useful if you're dealing
+  with fractional cents.
+* Optional currency exchange.
+* Optional string parsing.
 
-* Backed by BigDecimal, so it can store arbitrary-precision values without 
-  rounding errors. Useful if you're dealing with fractional cents.
+== Problems
 
-== PROBLEMS:
+* Does not implement all of Numeric, so doesn't quite act like a real number.
 
-* Does not implement all of Numeric, so doesn't quite act like a real number
+== Todo
 
-* Doesn't allow currency conversion (patches welcome)
-
-* Has a slightly different API than the Money package 
+* Has no Money package API compatibility to ease transition (module patch welcome).
   (http://dist.leetsoft.com/api/money/)
 
-== SYNOPSIS:
+== Synopsis
+
+=== Basic
+
+  require 'big_money'
+  BigMoney.default_currency = :aud
 
   bm = BigMoney.new('3.99')
-  bm.amount                       #=> BigDecimal.new('3.99')
-  bm.currency                     #=> :USD
-  bm.to_s                         #=> '3.99'
-  bm.to_formatted_s('$%.2f')      #=> '$3.99'
-  bm.to_formatted_s('$%.2f %s')   #=> '$3.99 USD'
-  
-  bm2 = 1.to_big_money
-  bm + bm2                        #=> BigMoney.new(4.99)
-  bm + 1                          #=> BigMoney.new(4.99)
+  bm.amount           #=> BigDecimal.new('3.99')
+  bm.currency         #=> BigMoney::Currency::AUD.instance
+  bm.to_s             #=> '3.99'
+  bm.to_s('$.2f')     #=> '$3.99'
+  bm.to_s('$%.2f %s') #=> '$3.99 AUD'
 
-== INSTALL:
+  bm2 = 1.to_big_money
+  bm + bm2 #=> BigMoney.new(4.99)
+  bm + 1   #=> BigMoney.new(4.99)
+
+=== Exchange
+
+  require 'big_money'
+  require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
+
+  bm = BigMoney.new('3.99')
+  bm.amount   #=> BigDecimal.new('3.99')
+  bm.currency #=> BigMoney::Currency::USD.instance
+
+  bm2 = bm.exchange(:aud)
+  bm.amount   #=> BigDecimal.new('5.22')
+  bm.currency #=> BigMoney::Currency::AUD.instance
+
+=== Parser
+
+  require 'big_money'
+  require 'big_money/parser'
+
+  BigMoney.parse('JPY ¥2500')   #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('JPY2500')     #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('2500JPY')     #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('¥2500JPY')    #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('¥2500', :jpy) #=> BigMoney.new('2500', :jpy)
+
+== Install
 
 * Via git:
 
-    git clone git://github.com/mroch/bigmoney.git
+    git clone git://github.com/mroch/big_money.git
 
 * Via gem:
 
-    gem install mroch-BigMoney -s http://gems.github.com
+    gem inseall mroch-big_money -s http://gems.github.com
 
-== LICENSE:
+== License
 
-(The MIT License)
-
-Copyright (c) 2008 Marshall Roch
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+See LICENSE.

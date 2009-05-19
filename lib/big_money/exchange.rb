@@ -2,6 +2,19 @@
 require 'bigdecimal'
 
 class BigMoney
+
+  # == Synopsis
+  #
+  #   require 'big_money'
+  #   require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
+  #
+  #   bm = BigMoney.new('3.99')
+  #   bm.amount   #=> BigDecimal.new('3.99')
+  #   bm.currency #=> BigMoney::Currency::USD.instance
+  #
+  #   bm2 = bm.exchange(:aud)
+  #   bm.amount   #=> BigDecimal.new('5.22')
+  #   bm.currency #=> BigMoney::Currency::AUD.instance
   module Exchangeable
     # Exchange to a new Currency.
     #
