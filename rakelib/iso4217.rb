@@ -1,5 +1,5 @@
-# coding: utf-8
-
+# encoding: utf-8
+require File.join(File.dirname(__FILE__), '..', 'gems', 'environment')
 require 'hpricot'
 require 'open-uri'
 require 'erubis'
@@ -9,7 +9,8 @@ class BigMoney
     module ISO4217
       def self.get
         doc   = Hpricot(open('http://en.wikipedia.org/wiki/ISO_4217').read)
-        codes = doc.at('//a#Active_codes').parent
+        $stderr.puts doc.to_s
+        codes = doc.at('#Active_codes').parent
         codes.name =~ /table/ && break while codes = codes.next_sibling
         to_ruby(codes) if codes
       end
