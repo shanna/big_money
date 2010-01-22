@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{big_money}
-  s.version = "1.0.2"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Shane Hanna", "Marshall Roch"]
@@ -29,8 +29,8 @@ Gem::Specification.new do |s|
      "lib/big_money/currency/iso4217.rb",
      "lib/big_money/exchange.rb",
      "lib/big_money/exchange/yahoo.rb",
-     "lib/big_money/ext.rb",
      "lib/big_money/parser.rb",
+     "lib/big_money/types.rb",
      "rakelib/iso4217.rb",
      "rakelib/iso4217.rb.erb",
      "test/helper.rb",
