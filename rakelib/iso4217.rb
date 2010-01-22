@@ -9,7 +9,6 @@ class BigMoney
     module ISO4217
       def self.get
         doc   = Hpricot(open('http://en.wikipedia.org/wiki/ISO_4217').read)
-        $stderr.puts doc.to_s
         codes = doc.at('#Active_codes').parent
         codes.name =~ /table/ && break while codes = codes.next_sibling
         to_ruby(codes) if codes
@@ -42,7 +41,8 @@ class BigMoney
       end
 
       def self.name(chunks)
-        (chunks[3] / 'a').inner_html rescue chunks[3].inner_html
+        name = (chunks[3] / 'a').inner_html rescue nil
+        (name.nil? || name.empty?) ? chunks[3].inner_html : name
       end
     end # ISO4217
   end # Task

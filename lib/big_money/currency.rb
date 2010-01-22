@@ -1,94 +1,75 @@
-# coding: utf-8
-require 'singleton'
+require 'set'
 
 class BigMoney
-  module Currencies
-    # Short form BigMoney::Currency.find(code) to save some typing.
-    #
-    # ==== Examples
-    #
-    #   BigMoney.currency(:usd) #=> BigMoney::Currency.find(:usd)
-    #
-    # ==== Parameters
-    # code<#to_s>:: An upper or lowercase string or symbol of the ISO-4217 currency code.
-    #
-    # ==== Returns
-    # BigMoney::Currency
-    def currency(code)
-      Currency.find(code)
-    end
-  end # Currencies
-  extend Currencies
-
-  # Currency singleton objects.
-  #
-  # By default ISO4217 currency codes are known and registered with the factory. You'll need to sublcass Currency in
-  # order to use non ISO4217 currencies.
-  #
-  #   class WOW < BigMoney::Currency
-  #     self.name   = 'World of Warcraft Gold'
-  #     self.code   = 'WOW'
-  #     self.offset = 4
-  #   end
-  #
-  #   bm = BigMoney.new(12.5020, :wow) # Would throw an UnknownCurrency error without the subclass.
-  #   bm.to_s #=> 'WOW 12.5000' # 12 gold, 50 silver, 20 copper
-  #
-  # Currency singletons are comparable against itself, an upper or lowercase string or symbol of the currency code.
-  #
-  #  gold = WOW.instance
-  #  gold == :wow  #=> true
-  #  gold == 'wow' #=> true
   class Currency
     include Comparable
-    include Singleton
 
-    # Compare against another currency object, an upper or lowercase string or symbol of the currecy code.
-    def <=>(value)
-      code.to_s <=> value.to_s.upcase
+    attr_accessor :code, :offset, :name
+    alias to_s code
+
+    def hash
+      code.hash
     end
 
-    # English currency name.
-    def name
-      self.class.name
+    def eql?(rvalue)
+      self.class.equal?(rvalue.class) && code == rvalue.code
+    end
+    alias == eql?
+
+    def <=>(rvalue)
+      self.class == rvalue.class ? (code <=> rvalue.code) || 0 : nil
     end
 
-    # ISO 4217 3 letter currency code.
-    def code
-      self.class.code
-    end
-
-    # Number of decimal places to display by default.
-    def offset
-      self.class.offset
-    end
-
-    # Currency code.
-    def to_s
-      code.to_s
+    #--
+    # TODO: Validate.
+    def initialize(code, offset, name)
+      @code, @offset, @name = code.to_s.upcase, offset, name
     end
 
     class << self
-      attr_accessor :name, :code, :offset
-
-      @@currencies = []
-      def inherited(currency) #:nodoc:
-        super
-        @@currencies << currency
+      def default
+        raise "No default currency has been set. See BigMoney::Currency." unless default?
+        @@default
       end
 
-      # All currencies. By default all current ISO4217 currencies.
+      def default=(currency)
+        raise TypeError.new("Expected kind of BigMoney::Currency but got #{currency.class}.") \
+          unless currency.kind_of?(Currency)
+        @@default = currency
+      end
+
+      def default?
+        defined? @@default
+      end
+
       def all
-        @@currencies.uniq
+        @@all ||= Set.new
       end
 
-      # Find a currency instance from an upper or lowercase string or symbol of the currency code.
+      # Find an existing currency module by Object, Symbol or String.
+      #
+      # ==== Examples
+      #
+      #   AUD = BigMoney::Currency.new(:aud, 2, 'Australian Dollar')
+      #
+      #   BigMoney::Currency.find(:aud)
+      #   BigMoney::Currency.find('aud')
+      #   BigMoney::Currency.find('AUD')
+      #   BigMoney::Currency.find(AUD)
       def find(currency)
-        klass = all.find{|c| c.code == currency.to_s.upcase}
-        raise ArgumentError.new("+currency+ '#{currency}' does not exist.") if klass.nil?
-        klass.instance
+        if currency.is_a?(self)
+          currency
+        else
+          currency = currency.to_s.upcase
+          all.find{|c| c.code == currency}
+        end
+      end
+
+      def register(*args)
+        self.all << currency = new(*args).freeze
+        currency
       end
     end
   end # Currency
+end # BigMoney
 
-end # Money
