@@ -9,6 +9,8 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
 * Encapsulates an amount with its currency into a single object.
 * Backed by BigDecimal, so it can store arbitrary-precision values without rounding errors. Useful if you're dealing
   with fractional cents.
+* Sensible currency handling.
+* Supports all ISO-4217 currencies.
 * Optional currency exchange.
 * Optional string parsing.
 
@@ -26,52 +28,66 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
 === Basic
 
   require 'big_money'
-  BigMoney.default_currency = :aud
 
-  bm = BigMoney.new('3.99')
+  bm = BigMoney.new('3.99', :aud)
   bm.amount           #=> BigDecimal.new('3.99')
-  bm.currency         #=> BigMoney::Currency::AUD.instance
+  bm.currency         #=> BigMoney::Currency::AUD
   bm.to_s             #=> '3.99'
   bm.to_s('$.2f')     #=> '$3.99'
   bm.to_s('$%.2f %s') #=> '$3.99 AUD'
 
-  bm2 = 1.to_big_money
+  bm2 = 1.to_big_money(:aud)
   bm + bm2 #=> BigMoney.new(4.99)
   bm + 1   #=> BigMoney.new(4.99)
+
+  # Not recommended but if you must.
+  BigMoney::Currency.default = :aud
+
+  bm = BigMoney.new('3.99')
+  bm.amount   #=> BigDecimal.new('3.99')
+  bm.currency #=> BigMoney::Currency::AUD
+
+  bm2 = 1.to_big_money
+  bm2.amount   #=> BigDecimal.new('3.99')
+  bm2.currency #=> BigMoney::Currency::AUD
 
 === Exchange
 
   require 'big_money'
   require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
 
-  bm = BigMoney.new('3.99')
+  bm = BigMoney.new('3.99', :usd)
   bm.amount   #=> BigDecimal.new('3.99')
-  bm.currency #=> BigMoney::Currency::USD.instance
+  bm.currency #=> BigMoney::Currency::USD
 
   bm2 = bm.exchange(:aud)
   bm.amount   #=> BigDecimal.new('5.22')
-  bm.currency #=> BigMoney::Currency::AUD.instance
+  bm.currency #=> BigMoney::Currency::AUD
 
 === Parser
 
   require 'big_money'
   require 'big_money/parser'
 
-  BigMoney.parse('JPY ¥2500')   #=> BigMoney.new('2500', :jpy)
-  BigMoney.parse('JPY2500')     #=> BigMoney.new('2500', :jpy)
-  BigMoney.parse('2500JPY')     #=> BigMoney.new('2500', :jpy)
-  BigMoney.parse('¥2500JPY')    #=> BigMoney.new('2500', :jpy)
-  BigMoney.parse('¥2500', :jpy) #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('JPY ¥2500') #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('JPY2500')   #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('2500JPY')   #=> BigMoney.new('2500', :jpy)
+  BigMoney.parse('¥2500JPY')  #=> BigMoney.new('2500', :jpy)
+
+  # ISO-4217 BigMoney::Currency::XXX aka 'No currency' will be used if a currency cannot be parsed along with the
+  # amount. If you know the currency and just need the amount XXX is always exchanged 1:1 with any currency.
+  bm = BigMoney.parse('¥2500') #=> BigMoney.new('2500', :xxx)
+  bm.exchange(:jpy)            #=> BigMoney.new('2500', :jpy)
 
 == Install
 
 * Via git:
 
-    git clone git://github.com/mroch/big_money.git
+    git clone git://github.com/shanna/big_money.git
 
 * Via gem:
 
-    gem inseall mroch-big_money -s http://gems.github.com
+    gem install big_money
 
 == License
 
