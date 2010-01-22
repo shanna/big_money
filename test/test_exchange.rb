@@ -1,5 +1,5 @@
-# coding: utf-8
-require 'helper'
+# encoding: utf-8
+require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 require 'big_money/exchange'
 
 class TestEx < BigMoney::Exchange
@@ -30,6 +30,8 @@ class TestExchange < Test::Unit::TestCase
 
     should 'return equal rate' do
       assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :usd)
+      assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :xxx)
+      assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:xxx, :usd)
     end
   end
 end

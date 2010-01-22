@@ -1,4 +1,4 @@
-# coding: utf-8
+# encoding: utf-8
 require 'bigdecimal'
 
 class BigMoney
@@ -8,13 +8,13 @@ class BigMoney
   #   require 'big_money'
   #   require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
   #
-  #   bm = BigMoney.new('3.99')
+  #   bm = BigMoney.new('3.99', :usd)
   #   bm.amount   #=> BigDecimal.new('3.99')
-  #   bm.currency #=> BigMoney::Currency::USD.instance
+  #   bm.currency #=> BigMoney::Currency::USD
   #
   #   bm2 = bm.exchange(:aud)
   #   bm.amount   #=> BigDecimal.new('5.22')
-  #   bm.currency #=> BigMoney::Currency::AUD.instance
+  #   bm.currency #=> BigMoney::Currency::AUD
   module Exchangeable
     # Exchange to a new Currency.
     #
@@ -51,14 +51,16 @@ class BigMoney
       # Fetch the exchange rate between two currencies.
       #
       # ==== Parameters
-      # from<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
-      # to<BigMoney::Currency, #to_s>:: Anything that BigMoney::Currency#find can find.
+      # from<BigMoney::Currency, .to_s>:: Anything that BigMoney::Currency#find can find.
+      # to<BigMoney::Currency, .to_s>:: Anything that BigMoney::Currency#find can find.
       #
       # ==== Returns
       # BigDecimal
       def rate(from, to)
-        exchange = [from, to].map{|c| Currency.find(c)}
-        return BigDecimal(1.to_s) if exchange.uniq.length == 1
+        exchange = []
+        exchange << (Currency.find(from) or raise ArgumentError.new("Unknown +from+ currency #{from.inspect}."))
+        exchange << (Currency.find(to) or raise ArgumentError.new("Unknown +to+ currency #{to.inspect}."))
+        return BigDecimal.new(1.to_s) if exchange.uniq.size == 1 || exchange.find{|c| c == Currency::XXX}
 
         service = @@services.reverse.find do |service|
           !!exchange.reject{|c| service.currencies.include?(c)}
