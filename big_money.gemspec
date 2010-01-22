@@ -5,13 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{big_money}
-  s.version = "1.0.0"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Shane Hanna", "Marshall Roch"]
   s.date = %q{2010-01-22}
   s.email = ["shane.hanna@gmail.com", "mroch@cmu.edu"]
-  s.executables = ["rubyforge", "edit_json.rb", "convert_to_should_syntax", "erubis", "jeweler", "prettify_json.rb"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
