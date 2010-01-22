@@ -1,4 +1,4 @@
-# coding: utf-8
+# encoding: utf-8
 require 'big_money' # Make it possible to just require 'big_money/parser'.
 
 class BigMoney
@@ -15,7 +15,11 @@ class BigMoney
   #   BigMoney.parse('JPY2500')     #=> BigMoney.new('2500', :jpy)
   #   BigMoney.parse('2500JPY')     #=> BigMoney.new('2500', :jpy)
   #   BigMoney.parse('¥2500JPY')    #=> BigMoney.new('2500', :jpy)
-  #   BigMoney.parse('¥2500', :jpy) #=> BigMoney.new('2500', :jpy)
+  #   BigMoney.parse('¥2500')       #=> BigMoney.new('2500', :xxx)
+  #
+  # == Currency
+  #
+  # Due to the nature of string parsing it's possible t
   module Parser
     REGEXP = %r{
       (?:^|\b)
@@ -34,27 +38,27 @@ class BigMoney
     # Fuzzy parsing.
     #
     # ==== Parameters
-    # money<BigMoney, #to_s>::
-    #   The object to parse as money.
+    # money<.to_s>:: The object to parse as money.
     #
-    # currency<BigMoney::Currency, #to_s>::
-    #   The default currency to use if a currency can't be found.
+    # ==== Currency
+    # ISO-4217 BigMoney::Currency::XXX aka 'No currency' will be used if a currency cannot be parsed along with the
+    # amount. If you know the currency and just need the amount XXX is always exchanged 1:1 with any currency:
+    #
+    # money = BigMoney.parse('¥2500') #=> BigMoney.new('2500', :xxx)
+    # money.exchange(:jpy)            #=> BigMoney.new('2500', :jpy)
     #
     # ==== Returns
-    # BigMoney
-    def parse(money, currency = default_currency)
-      case money
-        when BigMoney                   then money
-        when BigDecimal, Integer, Float then new(money, currency)
-        else
-          match    = REGEXP.match(money.to_s) || return
-          currency = [match[1], match[4], currency].find{|c| Currency.find(c) rescue nil} || return
+    # BigMoney or nil
+    def parse(money)
+      raise TypeError.new("Can't convert +money+ #{money.class} into String.") unless money.respond_to?(:to_s)
 
-          # TODO: Currency should have a .delimiter method I reckon that returns the major/minor delimiter.
-          # For now '.' will do and everything else will be stripped.
-          money = [match[2], match[3].gsub(/[^0-9.E]/i, '')].join
-          new(money, currency)
-      end
+      match    = REGEXP.match(money.to_s) || return
+      currency = [match[1], match[4]].find{|c| Currency.find(c)} || Currency::XXX
+
+      # TODO: Currency should have a .delimiter method I reckon that returns the major/minor delimiter.
+      # For now '.' will do and everything else will be stripped.
+      money = [match[2], match[3].gsub(/[^0-9.Ee]/, '')].join
+      new(money, currency)
     end
   end # Parser
 
