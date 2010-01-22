@@ -7,12 +7,14 @@ require 'rake/rdoctask'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name     = 'big_money'
-    gem.summary  = %q{BigDecimal backed amount of money in a particular currency.}
-    gem.email    = ['shane.hanna@gmail.com', 'mroch@cmu.edu']
-    gem.homepage = 'http://github.com/shanna/big_money'
-    gem.authors  = ['Shane Hanna', 'Marshall Roch']
+    gem.name        = 'big_money'
+    gem.summary     = %q{BigDecimal backed amount of money in a particular currency.}
+    gem.email       = ['shane.hanna@gmail.com', 'mroch@cmu.edu']
+    gem.homepage    = 'http://github.com/shanna/big_money'
+    gem.authors     = ['Shane Hanna', 'Marshall Roch']
+    gem.executables = [] # Only ever bundled development executables in bin/*
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
