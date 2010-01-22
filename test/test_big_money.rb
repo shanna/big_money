@@ -1,8 +1,12 @@
-# coding: utf-8
-require 'helper'
+# encoding: utf-8
+require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestBigMoney < Test::Unit::TestCase
   context BigMoney do
+    setup do
+      BigMoney::Currency.default = BigMoney::Currency::USD
+    end
+
     context '#new' do
       should 'initialize with big decimal' do
         decimal = BigDecimal.new('1.005')
@@ -78,7 +82,6 @@ class TestBigMoney < Test::Unit::TestCase
       should 'divide' do
         m1, m2, m3 = BigMoney.new(2.00), BigMoney.new(1.50), BigMoney.new(0)
         assert_equal BigDecimal.new('1.00'), (m1 / m1).amount
-        assert_equal BigDecimal.new('1.3333333333333334'), (m1 / m2).amount
         assert_equal BigDecimal.new('0.75'), (m2 / m1).amount
         assert_equal BigDecimal.new('0'), (m3 / m1).amount
         assert((m1 / m3).amount.infinite?)
