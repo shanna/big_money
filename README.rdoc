@@ -36,10 +36,6 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   bm.to_s('$.2f')     #=> '$3.99'
   bm.to_s('$%.2f %s') #=> '$3.99 AUD'
 
-  bm2 = 1.to_big_money(:aud)
-  bm + bm2 #=> BigMoney.new(4.99)
-  bm + 1   #=> BigMoney.new(4.99)
-
   # Not recommended but if you must.
   BigMoney::Currency.default = :aud
 
@@ -78,6 +74,18 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   # amount. If you know the currency and just need the amount XXX is always exchanged 1:1 with any currency.
   bm = BigMoney.parse('¥2500') #=> BigMoney.new('2500', :xxx)
   bm.exchange(:jpy)            #=> BigMoney.new('2500', :jpy)
+
+=== Types
+
+  require 'big_money'
+  require 'big_money/types'
+
+  # Numeric
+  1.to_big_money(:aud)         #=> BigMoney.new(1, :aud)
+  12_123.44.to_big_money(:aud) #=> BigMoney.new('12123.44', :aud)
+
+  # String
+  '1'.to_big_money(:aud)       #=> BigMoney.new(1, :aud)
 
 == Install
 
