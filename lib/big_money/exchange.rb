@@ -41,12 +41,13 @@ class BigMoney
   # No caching is done by default. You can set one though using anything that behaves like a Hash for example the
   # moneta library.
   #
-  # ==== Example
+  # ==== Cache
   #
   #   require 'bigmoney/exchanage'
+  #   require 'moneta'
   #   require 'moneta/memcache'
   #
-  #   BigMoney::Exchange.cache = Moneta::Memcache.new('localhost', default_ttl: 3_600)
+  #   BigMoney::Exchange.cache = Moneta::Memcache.new(server: 'localhost', default_ttl: 3_600)
   class Exchange
     class ConversionError < StandardError; end
 

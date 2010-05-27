@@ -52,6 +52,11 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   require 'big_money'
   require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
 
+  # Cache it with memcache.
+  require 'moneta'
+  require 'moneta/memcache'
+  BigMoney::Exchange.cache = Moneta::Memcache.new(server: 'localhost', default_ttl: 3_600)
+
   bm = BigMoney.new('3.99', :usd)
   bm.amount   #=> BigDecimal.new('3.99')
   bm.currency #=> BigMoney::Currency::USD
