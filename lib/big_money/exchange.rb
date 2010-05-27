@@ -36,13 +36,31 @@ class BigMoney
 
   # Find the exchange rate between two currencies.
   #
-  # Be aware no caching is done at all at the moment.
-  #--
-  # TODO: Moneta would be ideal for this.
+  # ==== Notes
+  #
+  # No caching is done by default. You can set one though using anything that behaves like a Hash for example the
+  # moneta library.
+  #
+  # ==== Example
+  #
+  #   require 'bigmoney/exchanage'
+  #   require 'moneta/memcache'
+  #
+  #   BigMoney::Exchange.cache = Moneta::Memcache.new('localhost', default_ttl: 3_600)
   class Exchange
     class ConversionError < StandardError; end
 
     class << self
+      def cache=(store)
+        raise "Cache object #{store.class} does not respond to [] and []=." \
+          unless store.respond_to?(:'[]') and store.respond_to?(:'[]=')
+        @@cache = store
+      end
+
+      def cache
+        @@cache ||= nil
+      end
+
       @@services = []
       def inherited(service) #:nodoc:
         @@services << service
@@ -62,12 +80,20 @@ class BigMoney
         exchange << (Currency.find(to) or raise ArgumentError.new("Unknown +to+ currency #{to.inspect}."))
         return BigDecimal.new(1.to_s) if exchange.uniq.size == 1 || exchange.find{|c| c == Currency::XXX}
 
+        id = exchange.map{|c| c.code}.join(':')
+        if cache && rate = cache[id]
+          return rate
+        end
+
         service = @@services.reverse.find do |service|
           !!exchange.reject{|c| service.currencies.include?(c)}
         end
 
         service or raise ConversionError # TODO: Message?
-        BigDecimal.new(service.read_rate(*exchange).to_s)
+        rate = BigDecimal.new(service.read_rate(*exchange).to_s)
+
+        cache[id] = rate if cache
+        rate
       end
 
       protected

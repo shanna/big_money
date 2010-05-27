@@ -33,5 +33,11 @@ class TestExchange < Test::Unit::TestCase
       assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :xxx)
       assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:xxx, :usd)
     end
+
+    should 'be cacheable' do
+      BigMoney::Exchange.cache = {}
+      BigMoney::Exchange.rate(:usd, :aud)
+      assert_equal BigDecimal.new('2'), BigMoney::Exchange.cache.values.first
+    end
   end
 end
