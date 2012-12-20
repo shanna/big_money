@@ -97,6 +97,22 @@ class TestBigMoney < Test::Unit::TestCase
         assert_equal BigMoney.new(1),  -BigMoney.new(-1)
         assert_equal BigMoney.new(1),  -BigMoney.new(-1)
       end
+
+      should 'zero?' do
+        assert_equal BigMoney.new(-1.05).zero?, false
+        assert_equal BigMoney.new(0).zero?,     true
+        assert_equal BigMoney.new(0.0).zero?,   true
+        assert_equal BigMoney.new(1).zero?,     false
+        assert_equal BigMoney.new(1.05).zero?,  false
+      end
+
+      should 'nonzero?' do
+        assert_equal BigMoney.new(-1.05).nonzero?, BigMoney.new(-1.05)
+        assert_equal BigMoney.new(0).nonzero?,     nil
+        assert_equal BigMoney.new(0.0).nonzero?,   nil
+        assert_equal BigMoney.new(1).nonzero?,     BigMoney.new(1)
+        assert_equal BigMoney.new(1.05).nonzero?,  BigMoney.new(1.05)
+      end
     end
 
     context 'serialization' do
