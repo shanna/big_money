@@ -1,7 +1,5 @@
-root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
-require File.join(root, 'gems', 'environment')
-Bundler.require_env(:development)
+require 'bundler'
+Bundler.setup(:development)
 require 'test/unit'
 
 begin
@@ -11,6 +9,7 @@ rescue LoadError
   exit 1
 end
 
+root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $:.unshift File.join(root, 'lib'), File.dirname(__FILE__)
 require 'big_money'
 
