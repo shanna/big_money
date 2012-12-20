@@ -1,20 +1,19 @@
 # encoding: utf-8
-require 'rubygems'
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name        = 'big_money'
-    gem.summary     = %q{BigDecimal backed amount of money in a particular currency.}
+    gem.description = %q{BigDecimal backed amount of money in a particular currency.}
     gem.email       = ['shane.hanna@gmail.com', 'mroch@cmu.edu']
     gem.homepage    = 'http://github.com/shanna/big_money'
     gem.authors     = ['Shane Hanna', 'Marshall Roch']
     gem.executables = [] # Only ever bundled development executables in bin/*
   end
-  Jeweler::GemcutterTasks.new
+  Jeweler::RubygemsDotOrgTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
@@ -25,7 +24,7 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-Rake::RDocTask.new do |rdoc|
+RDoc::Task.new do |rdoc|
   if File.exist?('VERSION.yml')
     config = YAML.load(File.read('VERSION.yml'))
     version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"

@@ -6,4 +6,5 @@ group :development do
   gem 'shoulda'
   gem 'hpricot'
   gem 'erubis'
+  gem 'rdoc'
 end
