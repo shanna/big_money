@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "big_money"
-  s.version = "1.2.1"
+  s.version = "1.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Shane Hanna", "Marshall Roch"]
-  s.date = "2012-12-20"
+  s.date = "2012-12-21"
   s.description = "BigDecimal backed amount of money in a particular currency."
   s.email = ["shane.hanna@gmail.com", "mroch@cmu.edu"]
   s.extra_rdoc_files = [
