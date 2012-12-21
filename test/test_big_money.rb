@@ -100,6 +100,7 @@ class TestBigMoney < Test::Unit::TestCase
 
       should 'zero?' do
         assert_equal BigMoney.new(-1.05).zero?, false
+        assert_equal BigMoney.new(-1).zero?,    false
         assert_equal BigMoney.new(0).zero?,     true
         assert_equal BigMoney.new(0.0).zero?,   true
         assert_equal BigMoney.new(1).zero?,     false
@@ -108,10 +109,29 @@ class TestBigMoney < Test::Unit::TestCase
 
       should 'nonzero?' do
         assert_equal BigMoney.new(-1.05).nonzero?, BigMoney.new(-1.05)
+        assert_equal BigMoney.new(-1).nonzero?,    BigMoney.new(-1)
         assert_equal BigMoney.new(0).nonzero?,     nil
         assert_equal BigMoney.new(0.0).nonzero?,   nil
         assert_equal BigMoney.new(1).nonzero?,     BigMoney.new(1)
         assert_equal BigMoney.new(1.05).nonzero?,  BigMoney.new(1.05)
+      end
+
+      should 'negative?' do
+        assert_equal BigMoney.new(-1.05).negative?, true
+        assert_equal BigMoney.new(-1).negative?,    true
+        assert_equal BigMoney.new(0).negative?,     false
+        assert_equal BigMoney.new(0.0).negative?,   false
+        assert_equal BigMoney.new(1).negative?,     false
+        assert_equal BigMoney.new(1.05).negative?,  false
+      end
+
+      should 'positive?' do
+        assert_equal BigMoney.new(-1.05).positive?, false
+        assert_equal BigMoney.new(-1).positive?,    false
+        assert_equal BigMoney.new(0).positive?,     false
+        assert_equal BigMoney.new(0.0).positive?,   false
+        assert_equal BigMoney.new(1).positive?,     true
+        assert_equal BigMoney.new(1.05).positive?,  true
       end
     end
 

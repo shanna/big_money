@@ -86,6 +86,14 @@ class BigMoney
     amount.nonzero? && self
   end
 
+  def positive?
+    self > self.class.new(0, self.currency)
+  end
+
+  def negative?
+    self < self.class.new(0, self.currency)
+  end
+
   def <=>(money)
     money.kind_of?(self.class) ? (currency <=> money.currency).nonzero? || (amount <=> money.amount).nonzero? || 0 : nil
   end
