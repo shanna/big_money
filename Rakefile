@@ -1,41 +1,16 @@
 # encoding: utf-8
 require 'rake'
+
 require 'rake/testtask'
-require 'rdoc/task'
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name        = 'big_money'
-    gem.description = %q{BigDecimal backed amount of money in a particular currency.}
-    gem.email       = ['shane.hanna@gmail.com', 'mroch@cmu.edu']
-    gem.homepage    = 'http://github.com/shanna/big_money'
-    gem.authors     = ['Shane Hanna', 'Marshall Roch']
-    gem.executables = [] # Only ever bundled development executables in bin/*
-  end
-  Jeweler::RubygemsDotOrgTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
-
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
 
-RDoc::Task.new do |rdoc|
-  if File.exist?('VERSION.yml')
-    config = YAML.load(File.read('VERSION.yml'))
-    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
-  else
-    version = ""
-  end
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "big_money #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+require 'yard'
+YARD::Rake::YardocTask.new do |yard|
+  yard.files = Dir["lib/**/*.rb"]
 end
 
 namespace :currency do

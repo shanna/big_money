@@ -1,10 +1,11 @@
-= BigMoney
+BigMoney
+========
 
-== Description
+## Description
 
 Represents an amount of money in a particular currency. Backed by BigDecimal, so it's safe from float rounding errors.
 
-== Features
+## Features
 
 * Encapsulates an amount with its currency into a single object.
 * Backed by BigDecimal, so it can store arbitrary-precision values without rounding errors. Useful if you're dealing
@@ -14,19 +15,20 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
 * Optional currency exchange.
 * Optional string parsing.
 
-== Problems
+## Problems
 
 * Does not implement all of Numeric, so doesn't quite act like a real number.
 
-== Todo
+## Todo
 
 * Has no Money package API compatibility to ease transition (module patch welcome).
   (http://dist.leetsoft.com/api/money/)
 
-== Synopsis
+## Synopsis
 
-=== Basic
+### Basic
 
+```ruby
   require 'big_money'
 
   bm = BigMoney.new('3.99', :aud)
@@ -46,9 +48,11 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   bm2 = 1.to_big_money
   bm2.amount   #=> BigDecimal.new('3.99')
   bm2.currency #=> BigMoney::Currency::AUD
+```
 
-=== Exchange
+### Exchange
 
+```ruby
   require 'big_money'
   require 'big_money/exchange/yahoo' # Use yahoo finance exchange service.
 
@@ -64,9 +68,11 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   bm2 = bm.exchange(:aud)
   bm.amount   #=> BigDecimal.new('5.22')
   bm.currency #=> BigMoney::Currency::AUD
+```
 
-=== Parser
+### Parser
 
+```ruby
   require 'big_money'
   require 'big_money/parser'
 
@@ -79,9 +85,11 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
   # amount. If you know the currency and just need the amount XXX is always exchanged 1:1 with any currency.
   bm = BigMoney.parse('¥2500') #=> BigMoney.new('2500', :xxx)
   bm.exchange(:jpy)            #=> BigMoney.new('2500', :jpy)
+```
 
-=== Types
+### Types
 
+```ruby
   require 'big_money'
   require 'big_money/types'
 
@@ -91,17 +99,28 @@ Represents an amount of money in a particular currency. Backed by BigDecimal, so
 
   # String
   '1'.to_big_money(:aud)       #=> BigMoney.new(1, :aud)
+```
 
-== Install
+## Install
 
 * Via git:
 
+```
     git clone git://github.com/shanna/big_money.git
+```
 
 * Via gem:
 
+```
     gem install big_money
+```
 
-== License
+## Contributing
 
-See LICENSE.
+Go nuts! There is no style guide, I do not care if you write tests or comment
+code because I can do that stuff for you. If you write something neat just send
+a pull request, tweet, email or yell it at me line by line in person.
+
+## License
+
+MIT

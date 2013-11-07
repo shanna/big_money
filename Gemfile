@@ -1,10 +1,3 @@
-# vim: syntax=ruby
 source 'https://rubygems.org'
+gemspec
 
-group :development do
-  gem 'jeweler'
-  gem 'shoulda'
-  gem 'hpricot'
-  gem 'erubis'
-  gem 'rdoc'
-end

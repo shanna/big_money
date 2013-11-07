@@ -1,5 +1,5 @@
 # encoding: utf-8
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require_relative 'helper'
 require 'big_money/exchange'
 
 class TestEx < BigMoney::Exchange
@@ -12,32 +12,30 @@ class TestEx < BigMoney::Exchange
   end
 end
 
-class TestExchange < Test::Unit::TestCase
-  context BigMoney::Exchange do
-    setup do
-      @aud = BigMoney.currency(:aud)
-      @usd = BigMoney.currency(:usd)
-    end
+describe BigMoney::Exchange do
+  before do
+    @aud = BigMoney.currency(:aud)
+    @usd = BigMoney.currency(:usd)
+  end
 
-    should 'return rate' do
-      bd = BigDecimal.new('2')
-      assert_equal bd, BigMoney::Exchange.rate(@aud, @usd)
-      assert_equal bd, BigMoney::Exchange.rate(:aud, :usd)
-      assert_raise(ArgumentError) do
-        BigMoney::Exchange.rate(:aud, :fud)
-      end
+  it 'must return rate' do
+    bd = BigDecimal.new('2')
+    assert_equal bd, BigMoney::Exchange.rate(@aud, @usd)
+    assert_equal bd, BigMoney::Exchange.rate(:aud, :usd)
+    assert_raises(ArgumentError) do
+      BigMoney::Exchange.rate(:aud, :fud)
     end
+  end
 
-    should 'return equal rate' do
-      assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :usd)
-      assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :xxx)
-      assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:xxx, :usd)
-    end
+  it 'must return equal rate' do
+    assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :usd)
+    assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:usd, :xxx)
+    assert_equal BigDecimal.new('1'), BigMoney::Exchange.rate(:xxx, :usd)
+  end
 
-    should 'be cacheable' do
-      BigMoney::Exchange.cache = {}
-      BigMoney::Exchange.rate(:usd, :aud)
-      assert_equal BigDecimal.new('2'), BigMoney::Exchange.cache.values.first
-    end
+  it 'must be cacheable' do
+    BigMoney::Exchange.cache = {}
+    BigMoney::Exchange.rate(:usd, :aud)
+    assert_equal BigDecimal.new('2'), BigMoney::Exchange.cache.values.first
   end
 end
